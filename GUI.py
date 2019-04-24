@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import Backend
 
+
 class GUI:
 
     def __init__(self, master):
@@ -40,11 +41,14 @@ class GUI:
         self.user_name = tk.Label(self.output_frame, bg="white", text="User", anchor="w")
         self.user_name.grid(row=1, column=0, sticky="nesw")
 
-        # label for user tweet inside output_frame
-        self.tweet_body = tk.Label(self.output_frame, bg="white", anchor="w", height=13)
+        # string variable to hold tweet generated
+        self.tweet_message = tk.StringVar()
+
+        # label to display generated tweet inside output frame
+        self.tweet_body = tk.Label(self.output_frame, bg="white", anchor="w", height=13, textvariable=self.tweet_message)
         self.tweet_body.grid(row=2,column=0, sticky="ew")
 
-        # label to create border for output_form
+        # label to create border for output_form (to contain stars)
         self.tweet_border = tk.Label(self.output_frame, bg="white", anchor="w", height=7, relief="ridge")
         self.tweet_border.grid(row=3,column=0,sticky="ew")
 
@@ -89,28 +93,32 @@ class GUI:
         self.mod_4.grid(row=3,column=0, pady=(10,0), sticky="w")
         self.mod_4.configure(highlightthickness=0, bd=0, bg="#1E90FF")
 
+        # submit button
+        self.submit_button = ttk.Button(self.left_frame, text="Tweet", command=self.gen_tweet)
+        self.submit_button.grid(row=4, column=0, padx=(0, pad_x / 2 + 50), pady=(10, 0))
+
         # init tweet contents
         self.tweet_content = "tweet"
 
-        def get_user_data():
-            print ("Entry: ", self.entry.get())
-            print ("Hate bar: ", self.opinion_scale.get())
-            print ("Modifier 1: ", self.var_1.get())
-            print ("Mod 2: ", self.var_2.get())
-            print ("Mod 3: ", self.var_3.get())
-            print ("Mod 4: ", self.var_4.get())
+    def get_user_data(self):
+        print ("Entry: ", self.entry.get())
+        print ("Hate bar: ", self.opinion_scale.get())
+        print ("Modifier 1: ", self.var_1.get())
+        print ("Mod 2: ", self.var_2.get())
+        print ("Mod 3: ", self.var_3.get())
+        print ("Mod 4: ", self.var_4.get())
 
-        def gen_tweet():
-            inp = [(self.entry.get(), self.opinion_scale.get(), self.var_1.get(), self.var_2.get())]
-            self.tweet_content = Backend.TweetCreator(inp)
+    def gen_tweet(self):
+        inp = [(self.entry.get(), self.opinion_scale.get(), self.var_1.get(), self.var_2.get())]
+        self.tweet_content = Backend.TweetCreator(inp)
+        self.display_tweet(self.tweet_content)
 
-        # submit button
-        self.submit_button = ttk.Button(self.left_frame, text= "Tweet", command=gen_tweet)
-        self.submit_button.grid(row=4,column=0, padx=(0,pad_x/2 + 50), pady=(10,0))
+    # displays newly generated tweet in the tweet_body label
+    def display_tweet(self, val):
+        self.tweet_message.set(val)
 
 
 if __name__ == '__main__':
     root = tk.Tk()
     app = GUI(root)
     root.mainloop()
-    #root.destroy()
