@@ -52,70 +52,67 @@ class GUI:
         self.tweet_border = tk.Label(self.output_frame, bg="white", anchor="w", height=7, relief="ridge")
         self.tweet_border.grid(row=3,column=0,sticky="ew")
 
-        # create everything for the left frame
+        # create everything for the left frame ///////////////////////////////////////////////
 
         # add entry area in left_frame
         pad_x = self.inner_frame_width
         self.entry = tk.Entry(self.left_frame, width=20)
         self.entry.grid(row=0, column=0, pady=(40, 0), padx=(0, pad_x / 2 + 70))
 
-        # create scale for user
-        self.opinion_scale = ttk.Scale(self.left_frame, length = 100, from_=1, to=5, orient="horizontal")
-        self.opinion_scale.grid(row=1, column=0, pady=(5,0), padx=(pad_x/3,pad_x/3),sticky = "w")
+        # create label to display value from opinion_scale
+        self.hate_value = tk.StringVar(value="Current Hate Level: 0")
+        self.hate_label = tk.Label(self.left_frame, bg="white", textvariable=self.hate_value)
+        self.hate_label.grid(row=1, column=0, pady=(5, 0), padx=(pad_x / 3, pad_x / 3), sticky="w")
+
+        # create hate scale for user
+        self.opinion_scale = ttk.Scale(self.left_frame, length=100, from_=0, to=5, orient="horizontal", command=self.display_scale_value)
+        self.opinion_scale.grid(row=2, column=0, pady=(5, 0), padx=(pad_x/3, pad_x/3), sticky="w")
 
         # small frame for checkboxes
         self.check_frame = tk.Frame(self.left_frame, width=200, height=300, bg="#1E90FF")
-        self.check_frame.grid(row=2, column=0,pady=(30,0), padx=(pad_x/3,pad_x))
+        self.check_frame.grid(row=3, column=0,pady=(30,0), padx=(pad_x/3,pad_x))
 
-        # create modifier checkboxes
-        self.var_1 = tk.StringVar()
-        self.var_2 = tk.StringVar()
-        self.var_3 = tk.StringVar()
-        self.var_4 = tk.StringVar()
+        # create drop down list for user
+        self.option_select = tk.Listbox(self.check_frame, height=5)
+        # add options to the drop down list from list
+        for option in ["Place", "Event", "People"]:
+            self.option_select.insert(tk.END, option)
+        self.option_select.grid(row=0, column=0)
 
-        # modifier 1
-        self.mod_1 = tk.Checkbutton(self.check_frame, text="Person",variable = self.var_1, onvalue=("Person"), offvalue="")
-        self.mod_1.grid(row=0, column=0, sticky="w")
-        self.mod_1.configure(highlightthickness=0, bd=0, bg="#1E90FF")
-
-        # modifier 2
-        self.mod_2 = tk.Checkbutton(self.check_frame, text="Place",variable= self.var_2, onvalue="Word", offvalue="", bg="white")
-        self.mod_2.configure(highlightthickness=0, bd=0, bg="#1E90FF")
-        self.mod_2.grid(row=1, column=0, pady=(10,0), sticky="w")
-
-        #modifier 3
-        self.mod_3 = tk.Checkbutton(self.check_frame, text="Placeholder 3", variable= self.var_3, onvalue="Word3", offvalue="")
-        self.mod_3.grid(row=2, column=0, pady=(10,0), sticky="w")
-        self.mod_3.configure(highlightthickness=0, bd=0, bg="#1E90FF")
-
-        # modifier 4
-        self.mod_4 = tk.Checkbutton(self.check_frame, text="Placeholder 4", variable = self.var_4, onvalue="Word4", offvalue="")
-        self.mod_4.grid(row=3,column=0, pady=(10,0), sticky="w")
-        self.mod_4.configure(highlightthickness=0, bd=0, bg="#1E90FF")
-
-        # submit button
+        # submit button, calls gen_tweet function when clicked
         self.submit_button = ttk.Button(self.left_frame, text="Tweet", command=self.gen_tweet)
         self.submit_button.grid(row=4, column=0, padx=(0, pad_x / 2 + 50), pady=(10, 0))
 
         # init tweet contents
         self.tweet_content = "tweet"
 
+    # collect data from Entrybox, and drop down list
     def get_user_data(self):
         print ("Entry: ", self.entry.get())
-        print ("Hate bar: ", self.opinion_scale.get())
-        print ("Modifier 1: ", self.var_1.get())
-        print ("Mod 2: ", self.var_2.get())
-        print ("Mod 3: ", self.var_3.get())
-        print ("Mod 4: ", self.var_4.get())
+        formatted_opinion_scale = '%.0f' % self.opinion_scale.get()
+        print ("Hate bar: ", formatted_opinion_scale)
+        print("Option Picked: ", self.option_select.get(tk.ACTIVE))
 
     def gen_tweet(self):
-        inp = [(self.entry.get(), self.opinion_scale.get(), self.var_1.get(), self.var_2.get())]
+        inp = [(self.entry.get(), self.opinion_scale.get(), self.option_select.get(tk.ACTIVE))]
         self.tweet_content = Backend.TweetCreator(inp)
         self.display_tweet(self.tweet_content)
+        self.get_user_data()
+        self.reset_inputs()
 
     # displays newly generated tweet in the tweet_body label
     def display_tweet(self, val):
         self.tweet_message.set(val)
+
+    # format and display the current hate level based on scale
+    def display_scale_value(self, hate_val):
+        self.hate_value.set("Current Hate Level: {:.0f}".format(float(hate_val)))
+
+    # reset all input methods
+    def reset_inputs(self):
+        self.entry.delete(0, 'end')
+        self.opinion_scale.set(0)
+        self.option_select.selection_clear(0,tk.END)
 
 
 if __name__ == '__main__':
