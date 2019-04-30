@@ -48,6 +48,10 @@ def MarkovTrumpReactiveTweetGen(inp):
         ret = MarkovTweetGen(chain)
     else: 
         ret = MarkovReactiveTweetGen(chain, inp)
+    if(ret.endswith(',')):
+        ret = ret[0:-1]
+    if(not (ret.endswith(".")) and not (ret.endswith("!")) and not (ret.endswith("?"))):
+        ret += '.'
     return ret
 
 def MarkovReactiveTweetGen(MC, inp, length = 20):

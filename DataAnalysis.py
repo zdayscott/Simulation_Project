@@ -8,7 +8,7 @@ def Vocabulary():
     words.remove('@b@')
 
     counts = Counter(words)
-    print(counts)
+    print(counts.most_common(15))
 
 if __name__ == "__main__":
     Vocabulary()

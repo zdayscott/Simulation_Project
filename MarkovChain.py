@@ -12,6 +12,8 @@ def MarkovChain(text):
 
     # @b@ is a special token that was created to signify the begining of a new tweet. This is used to find the most common words
     # that trump starts tweets with.
+
+    tokens.remove('')
     for token, nToken in zip(tokens[0:-1], tokens[1:]):
         # Filtering out Retweets from the start tweet token
         if(token == "@b@" and nToken.endswith(':')):
