@@ -39,9 +39,16 @@ def MarkovTweetGen(MC, length = 20):
     
     retSen += '.'
     print(retSen)
+    return retSen
 
 def MarkovTrumpReactiveTweetGen(inp):
-    return MarkovReactiveTweetGen(MarkovChain.MarkovChain(csvParser.ImportTrumpData()), inp)
+    ret = ""
+    chain = MarkovChain.MarkovChain(csvParser.ImportTrumpData())
+    if(inp == ''):
+        ret = MarkovTweetGen(chain)
+    else: 
+        ret = MarkovReactiveTweetGen(chain, inp)
+    return ret
 
 def MarkovReactiveTweetGen(MC, inp, length = 20):
     word1 = ""
