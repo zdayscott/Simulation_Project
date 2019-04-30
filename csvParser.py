@@ -8,9 +8,11 @@ def ImportTrumpData():
 
         for i in range(800):
             row = next(readFile)
+            tweet = row[0]
+            if "http" not in tweet:
+                tweetContents.append(tweet)
 
             #print(row[0])
-            tweetContents.append(row[0])
         
         
         finalString = " @b@ ".join(tweetContents)

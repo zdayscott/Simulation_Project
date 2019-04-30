@@ -34,10 +34,37 @@ def MarkovTweetGen(MC, length = 20):
             break
         word1 = word2
         retSen += " " + word1
-
     
     retSen += '.'
     print(retSen)
+
+def MarkovTrumpReactiveTweetGen(inp):
+    return MarkovReactiveTweetGen(MarkovChain.MarkovChain(csvParser.ImportTrumpData()), inp)
+
+def MarkovReactiveTweetGen(MC, inp, length = 20):
+    word1 = ""
+    retSen = ""
+    if inp in MC:
+        word1 = inp
+        retSen = word1.capitalize()
+    else:
+        if(inp[:-1].endswith('s')):
+            word1 = "are"
+        else:
+            word1 = "is"
+        retSen = inp + ' ' + word1
+    
+    for it in range(length - 1):
+        word2 = random.choice(MC[word1])
+        if(word2 == "@b@"):
+            break
+        word1 = word2
+        retSen += " " + word1
+    
+    if(not (retSen[:-1].endswith(".")) and not (retSen[:-1].endswith("!")) and not (retSen[:-1].endswith("?"))):
+        retSen += '.'
+    print(retSen)
+    return retSen
 
 
 
@@ -48,5 +75,5 @@ if(__name__ == "__main__"):
     chain = MarkovChain.MarkovChain(csvParser.ImportTrumpData())
     for it in range(10):
         print("Test #" + str(it) + ':')
-        MarkovTweetGen(chain)
+        MarkovReactiveTweetGen(chain, "Hillary")
 

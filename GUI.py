@@ -94,8 +94,8 @@ class GUI:
         print("Option Picked: ", self.option_select.get(tk.ACTIVE))
 
     def gen_tweet(self):
-        inp = [(self.entry.get(), self.opinion_scale.get(), self.option_select.get(tk.ACTIVE))]
-        self.tweet_content = Backend.TweetCreator(inp)
+        inp = self.entry.get()
+        self.tweet_content = Backend.MarkovTrumpReactiveTweetGen(inp)
         self.display_tweet(self.tweet_content)
         self.get_user_data()
         self.reset_inputs()
