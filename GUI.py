@@ -96,7 +96,7 @@ class GUI:
     def gen_tweet(self):
         inp = [(self.entry.get(), self.opinion_scale.get(), self.option_select.get(tk.ACTIVE))]
         self.tweet_content = Backend.TweetCreator(inp)
-        self.display_tweet(self.tweet_content)
+        self.display_tweet(self.tweet_content)  # display contents of generated tweet
         self.get_user_data()
         self.reset_inputs()
 

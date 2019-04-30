@@ -6,6 +6,7 @@ input2 = [("Democrats", 9), ("Avocado toast", 8)]
 
 fillins = ["I really hate replaceme", "Hillary just wants replaceme, that should tell you enough", "replaceme is the greatest"]
 
+
 class Responces:
     def __init__(self, response, person, place, thing, event, dislike):
         self.resp = response
@@ -15,6 +16,7 @@ class Responces:
         self.event = event
 
         self.dislikes = dislike
+
 
 def TweetCreator(inp):
     tweet = fillins[random.randrange(0, fillins.__len__())]
