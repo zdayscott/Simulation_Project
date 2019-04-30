@@ -1,4 +1,6 @@
 import random
+import csvParser
+import MarkovChain
 
 # Test input to place hold for the front end. [(string, int), (Name/Event, rank of hate 1-10)]
 input1 = [("Ivanca", 1)]
@@ -22,8 +24,29 @@ def TweetCreator(inp):
     print(tweet)
     return tweet
 
+def MarkovTweetGen(MC, length = 20):
+    word1 = random.choice(list(MC.keys()))
+    retSen = word1.capitalize()
+
+    for it in range(length - 1):
+        word2 = random.choice(MC[word1])
+        if(word2 == "@b@"):
+            break
+        word1 = word2
+        retSen += " " + word1
+
+    
+    retSen += '.'
+    print(retSen)
+
+
+
+
 
 if(__name__ == "__main__"):
-    TweetCreator(input1)
-    TweetCreator(input2)
+    #TweetCreator(input1)
+    chain = MarkovChain.MarkovChain(csvParser.ImportTrumpData())
+    for it in range(10):
+        print("Test #" + str(it) + ':')
+        MarkovTweetGen(chain)
 
