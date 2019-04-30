@@ -27,7 +27,7 @@ def TweetCreator(inp):
     return tweet
 
 def MarkovTweetGen(MC, length = 20):
-    word1 = random.choice(list(MC.keys()))
+    word1 = random.choice(MC["@b@"])
     retSen = word1.capitalize()
 
     for it in range(length - 1):
@@ -57,20 +57,21 @@ def MarkovReactiveTweetGen(MC, inp, length = 20):
         word1 = inp
         retSen = word1.capitalize()
     else:
-        if(inp[:-1].endswith('s')):
+        if(inp.endswith('s')):
             word1 = "are"
         else:
             word1 = "is"
-        retSen = inp + ' ' + word1
+        retSen = inp.capitalize() + ' ' + word1
     
     for it in range(length - 1):
         word2 = random.choice(MC[word1])
+        # Check for custom end of tweet token
         if(word2 == "@b@"):
             break
         word1 = word2
         retSen += " " + word1
     
-    if(not (retSen[:-1].endswith(".")) and not (retSen[:-1].endswith("!")) and not (retSen[:-1].endswith("?"))):
+    if(not (retSen.endswith(".")) and not (retSen.endswith("!")) and not (retSen.endswith("?"))):
         retSen += '.'
     print(retSen)
     return retSen
@@ -84,5 +85,5 @@ if(__name__ == "__main__"):
     chain = MarkovChain.MarkovChain(csvParser.ImportTrumpData())
     for it in range(10):
         print("Test #" + str(it) + ':')
-        MarkovReactiveTweetGen(chain, "Hillary")
+        MarkovTrumpReactiveTweetGen("")
 

@@ -10,6 +10,7 @@ def ImportTrumpData():
             row = next(readFile)
             tweet = row[0]
             if "http" not in tweet:
+                tweet.replace("â€™", '\'')
                 tweetContents.append(tweet)
 
             #print(row[0])
