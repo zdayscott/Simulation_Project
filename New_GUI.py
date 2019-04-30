@@ -11,13 +11,14 @@ class Window(QWidget):
         QWidget.__init__(self)
         self.setWindowTitle("Tweet Simulator")
         twitter_icon = QIcon("twitter_icon.png")
+        self.setObjectName("window")
         self.setWindowIcon(twitter_icon)
-        self.setMinimumWidth(750)
+        self.setMinimumWidth(770)
         self.setMinimumHeight(750)
 
         # custom style sheet
         self.styleSheet = """
-        
+
         QPushButton#button {
             background-color: #1e90ff;
             border-style: outset;
@@ -28,12 +29,12 @@ class Window(QWidget):
             min-width: 10em;
             padding: 6px;
         }
-        
+
         QPushButton#button:pressed {
             background-color: #0000ff;
             border-style: inset;
         }
-        
+
         QPushButton#reset {
             background-color: #ff0000;
             border-style: outset;
@@ -44,13 +45,23 @@ class Window(QWidget):
             min-width: 10em;
             padding: 6px;
         }
-        
+
         QPushButton#reset:pressed {
             background-color: #8b0000;
             border-style: inset;
         }
-        QWidget {
+
+        QWidget#window {
             background-color: white;
+        }
+
+        QFrame#tweet_container {
+            background-color: #38444D;
+            border-width : 1px;
+            border-style: outset;
+            border-color: #0B1D75;
+            padding: 5px;
+            color: white;
         }
         """
 
@@ -138,51 +149,66 @@ class Window(QWidget):
         self.right_frame.setStyleSheet(self.styleSheet)
         layout.addWidget(self.right_frame, 0, 1)
 
-        # create small frame to hold generated tweet
-        self.tweet_frame = QFrame()
-        self.tweet_frame.setLineWidth(4)
-        self.tweet_frame.setMinimumWidth(self.right_frame.width())
-        self.tweet_frame.setMinimumHeight(self.right_frame.height() / 2)
-        self.tweet_frame.setStyleSheet("background-color: #191970; color: white; font: bold 14px")
-        self.tweet_frame.hide()
-
         # label to hold Trumps profile avatar
         trump_profile_label = QLabel()
         trump_profile_avatar = QPixmap()
         trump_profile_avatar.load("trump_profile.png")
         trump_profile_avatar = trump_profile_avatar.scaledToWidth(80, 80)
-        trump_profile_label.setStyleSheet("border-radius: 40px;")
+        trump_profile_label.setStyleSheet("border-radius: 40px; background-color:white;")
         trump_profile_label.setPixmap(trump_profile_avatar)
+
+        # create small frame to hold generated tweet
+        self.tweet_frame = QFrame()
+        self.tweet_frame.setObjectName("tweet_container")
+        self.tweet_frame.setLineWidth(4)
+        self.tweet_frame.setMinimumWidth(self.right_frame.width())
+        self.tweet_frame.setFixedHeight(160)
+        self.tweet_frame.setStyleSheet(self.styleSheet)
+        self.tweet_frame.hide()
 
         # label for Trump's Name
         self.trump_name = QLabel()
+        self.trump_name.setStyleSheet("font: bold 14px; color: white;")
         self.trump_name.setText("Donald J. Trump")
 
         # label for Trump's twitter handle
         self.trump_twitter_handle = QLabel()
+        self.trump_twitter_handle.setStyleSheet("font: 14px; color: #A5B3BD;")
         self.trump_twitter_handle.setText("@realDonaldTrump")
 
         # label to hold tweet body
         self.tweet_body = QLabel()
-        self.tweet_body.setStyleSheet("color: white; font: 14px;")
+        self.tweet_body.setText(" ")
+        self.tweet_body.setStyleSheet("color: white; font: 16px 'Humanist';")
         self.tweet_body.setWordWrap(True)
 
         # create internal horizontal box layout for tweet_frame
-        self.tweet_frame_horz_layout = QHBoxLayout()
-        self.tweet_frame_horz_layout.addWidget(trump_profile_label, 0, Qt.AlignTop)
-        self.tweet_frame_horz_layout.addWidget(self.trump_name, 0, Qt.AlignTop)
-        self.tweet_frame_horz_layout.addWidget(self.trump_twitter_handle, 1, Qt.AlignTop)
+        # row 1
+        self.tweet_row = QHBoxLayout()
+        self.tweet_row.addWidget(trump_profile_label)
+        self.tweet_row.addWidget(self.trump_name, 0, Qt.AlignTop)
+        self.tweet_row.addWidget(self.trump_twitter_handle, 0, Qt.AlignTop)
+        self.tweet_row.addStretch(1)
 
-        # create internal vertical Box Layout to align tweet body
-        # this Box Layout will contain horizontal box layout used for
-        # profile_avatar and trumps name
-        self.tweet_frame_vert_layout = QVBoxLayout()
-        self.tweet_frame_vert_layout.addLayout(self.tweet_frame_horz_layout)
-        self.tweet_frame_vert_layout.addWidget(self.tweet_body, 1, Qt.AlignTop)
-        self.tweet_body.setIndent(100)
+        # create column to hold tweet_row
+        self.tweet_col = QVBoxLayout()
+        self.tweet_col.addLayout(self.tweet_row)
 
-        # apply box layouts to tweet frame
-        self.tweet_frame.setLayout(self.tweet_frame_vert_layout)
+        # reuse tweet_row to add body of tweet
+        # row 2
+        self.tweet_row = QHBoxLayout()
+        self.tweet_row.addSpacing(85)
+        self.tweet_row.addWidget(self.tweet_body, 1, Qt.AlignTop)
+
+        # add tweet body row to column
+        self.tweet_col.addSpacing(-50)
+        self.tweet_col.addLayout(self.tweet_row)
+        self.tweet_col.addStretch(1)
+
+        # create horizontal box layout to contain and align all the rows
+        self.horizontal_container = QHBoxLayout()
+        self.tweet_frame.setLayout(self.horizontal_container)
+        self.horizontal_container.addLayout(self.tweet_col)
 
         # create internal layout for right frame to display generated tweet
         self.right_frame_layout = QGridLayout()
@@ -221,7 +247,6 @@ class Window(QWidget):
         inp = self.entry_box.text()
         self.tweet_content = Backend.MarkovTrumpReactiveTweetGen(inp)
         self.display_tweet(self.tweet_content)
-        # self.reset_info()
 
     def display_tweet(self, tweet):
         self.tweet_body.setText(tweet)
