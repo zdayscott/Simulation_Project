@@ -222,7 +222,6 @@ class Window(QWidget):
     # function to update the current hate label
     def update_hate(self, val):
         self.hate_label.setText("Scale of Hate: " + str(val))
-        self.get_input()
 
     # get all uer input
     def get_input(self):

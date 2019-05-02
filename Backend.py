@@ -81,9 +81,6 @@ def MarkovReactiveTweetGen(MC, inp, length = 20):
     return retSen
 
 
-
-
-
 if(__name__ == "__main__"):
     #TweetCreator(input1)
     chain = MarkovChain.MarkovChain(csvParser.ImportTrumpData())
